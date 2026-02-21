@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Churros</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Fuente limpia -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Pantalla de Login -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h1>Churros App</h1>
+            <p>Ingresa la contraseña</p>
+            <input type="password" id="password-input" placeholder="Contraseña">
+            <button type="button" id="login-btn">Ingresar</button>
+            <p id="login-error" class="error-msg">Contraseña incorrecta</p>
+        </div>
+    </div>
+
+    <!-- Aplicación Principal (Oculta hasta login) -->
+    <div id="app-container" class="hidden">
+        
+        <!-- Panel de Estadísticas -->
+        <div class="stats-panel">
+            <div class="stat-card">
+                <span class="stat-label">Stock Actual</span>
+                <span class="stat-value" id="stat-stock">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Pedidos (Pendientes)</span>
+                <span class="stat-value" id="stat-pending-qty">0 uds</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Pedidos</span>
+                <span class="stat-value" id="stat-total-orders">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Docenas Necesarias</span>
+                <span class="stat-value" id="stat-dozens">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Dulce (Potes)</span>
+                <span class="stat-value" id="stat-dulce">0</span>
+            </div>
+            <div class="stat-card highlight-green">
+                <span class="stat-label">Ganado (Entregado)</span>
+                <span class="stat-value" id="stat-earned">$0</span>
+            </div>
+            <div class="stat-card highlight-orange">
+                <span class="stat-label">Por Cobrar</span>
+                <span class="stat-value" id="stat-pending-money">$0</span>
+            </div>
+        </div>
+
+        <!-- Configuración Inicial -->
+        <div class="config-section">
+            <h2>Configuración del Día</h2>
+            <form id="config-form">
+                <div class="form-group">
+                    <label>Lugar de Venta</label>
+                    <select id="config-location">
+                        <option value="La Cesira">La Cesira</option>
+                        <option value="Alejo Ledesma">Alejo Ledesma</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Precio Docena ($)</label>
+                    <input type="number" id="config-price-dozen" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio Media Docena ($)</label>
+                    <input type="number" id="config-price-half" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock Inicial (Churros)</label>
+                    <input type="number" id="config-stock" required>
+                </div>
+                <button type="submit" class="btn-primary">Guardar / Actualizar</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <!-- Gestión de Clientes -->
+        <div class="clients-section">
+            <h2>Nuevo Pedido</h2>
+            <form id="client-form">
+                <input type="text" id="client-name" placeholder="Nombre del cliente" required>
+                <input type="number" id="client-qty" placeholder="Cantidad de churros" required>
+                <input type="text" id="client-obs" placeholder="Observaciones (Opcional)">
+                <input type="time" id="client-time" placeholder="Hora preferida (opcional)">
+                <button type="submit" class="btn-add">Agregar</button>
+            </form>
+
+            <div class="clients-list-header">
+                <h3>Lista de Pedidos</h3>
+                <button id="end-day-btn" class="btn-danger">Terminar Día</button>
+            </div>
+            
+            <div class="orders-container">
+    
+    <div class="orders-column">
+        <h3>🟡 Pendientes</h3>
+        <div id="pending-list"></div>
+    </div>
+
+    <div class="orders-column">
+        <h3>🟢 Entregados</h3>
+        <div id="delivered-list"></div>
+    </div>
+
+</div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
