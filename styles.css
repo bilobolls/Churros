@@ -22,6 +22,10 @@ body {
     background: rgb(224, 150, 175);
     color: var(--text);
     padding-bottom: 50px;
+    
+    /* 👈 AGREGAR ESTO PARA BLOQUEAR EL MOVIMIENTO HORIZONTAL */
+    overflow-x: hidden; 
+    width: 100%;
 }
 
 /* UTILIDADES */
@@ -195,8 +199,11 @@ input[type="time"] {
     margin-bottom: 15px;
     flex-wrap: wrap;
     gap: 10px;
+    
+    /* 👈 AGREGAR ESTO PARA QUE NO ROMPA LOS BORDES */
+    width: 100%;
+    box-sizing: border-box;
 }
-
 .client-card {
     background: var(--card-bg);
     border-radius: 20px;
