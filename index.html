@@ -69,21 +69,19 @@
                 </div>
                 <div class="form-group">
                     <label>Precio Docena ($)</label>
-                    <input type="number" id="config-price-dozen" required>
+                    <input type="number" id="config-price-dozen" min="0" required>
                 </div>
                 <div class="form-group">
                     <label>Precio Media Docena ($)</label>
-                    <input type="number" id="config-price-half" required>
+                    <input type="number" id="config-price-half" min="0" required>
                 </div>
                 <div class="form-group">
                     <label>Stock Inicial (Churros)</label>
-                    <input type="number" id="config-stock" required>
+                    <input type="number" id="config-stock" min="0" required>
                 </div>
                 <button type="submit" class="btn-primary">Guardar / Actualizar</button>
             </form>
         </div>
-
-        <hr>
 
         <!-- Gestión de Clientes -->
         <div class="clients-section">
@@ -108,11 +106,11 @@
                 <button type="submit" class="btn-add">Agregar Pedido</button>
             </form>
 
-            <div class="clients-list-header">
+            <div class="clients-list-header" style="margin-top: 25px;">
                 <h3>Lista de Pedidos</h3>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     
-                    <!-- NUEVO FILTRO DE ZONAS -->
+                    <!-- FILTRO DE ZONAS -->
                     <select id="filter-zone" style="padding: 8px; border-radius: 12px; border: 1px solid var(--border); font-size: 0.9rem; background-color: white;">
                         <option value="Todas">👉 Ver Todas las Zonas</option>
                         <option value="Centro">Centro</option>
@@ -138,41 +136,6 @@
                     <div id="delivered-list"></div>
                 </div>
             </div>
-        </div>
-                
-                <!-- Selector de Zona/Sector -->
-                <select id="client-zone" required>
-                    <option value="" disabled selected>Seleccioná el barrio/zona...</option>
-                    <option value="Centro">Centro</option>
-                    <option value="Norte">Barrio Norte</option>
-                    <option value="Sur">Barrio Sur</option>
-                    <option value="Este">Barrio Este</option>
-                    <option value="Oeste">Barrio Oeste</option>
-                    <option value="Periferia">Periferia / Afueras</option>
-                </select>
-                
-                <input type="text" id="client-obs" placeholder="Ref: Al lado de la plaza (Opcional)">
-                <input type="time" id="client-time" placeholder="Hora (Opc)">
-                <button type="submit" class="btn-add">Agregar Pedido</button>
-            </form>
-            <div class="clients-list-header">
-                <h3>Lista de Pedidos</h3>
-                <button id="end-day-btn" class="btn-danger">Terminar Día</button>
-            </div>
-            
-            <div class="orders-container">
-    
-    <div class="orders-column">
-        <h3>🟡 Pendientes</h3>
-        <div id="pending-list"></div>
-    </div>
-
-    <div class="orders-column">
-        <h3>🟢 Entregados</h3>
-        <div id="delivered-list"></div>
-    </div>
-
-</div>
         </div>
 
     </div>
