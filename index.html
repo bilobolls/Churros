@@ -90,15 +90,13 @@
                 <input type="text" id="client-name" placeholder="Nombre (ej. Familia Pérez)" required>
                 <input type="number" id="client-qty" placeholder="Cantidad de churros" min="1" required>
                 
-                <!-- Selector de Zona/Sector -->
+                <!-- Selector de Zona/Sector (Actualizado) -->
                 <select id="client-zone" required>
-                    <option value="" disabled selected>Seleccioná el barrio/zona...</option>
-                    <option value="Centro">Centro</option>
+                    <option value="" disabled selected>Seleccioná el barrio...</option>
                     <option value="Norte">Barrio Norte</option>
                     <option value="Sur">Barrio Sur</option>
                     <option value="Este">Barrio Este</option>
                     <option value="Oeste">Barrio Oeste</option>
-                    <option value="Periferia">Periferia / Afueras</option>
                 </select>
                 
                 <input type="text" id="client-obs" placeholder="Ref: Al lado de la plaza (Opcional)">
@@ -109,6 +107,32 @@
             <div class="clients-list-header" style="margin-top: 25px;">
                 <h3>Lista de Pedidos</h3>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    
+                    <!-- FILTRO DE ZONAS (Actualizado) -->
+                    <select id="filter-zone" style="padding: 8px; border-radius: 12px; border: 1px solid var(--border); font-size: 0.9rem; background-color: white;">
+                        <option value="Todas">👉 Ver Todos</option>
+                        <option value="Norte">Barrio Norte</option>
+                        <option value="Sur">Barrio Sur</option>
+                        <option value="Este">Barrio Este</option>
+                        <option value="Oeste">Barrio Oeste</option>
+                    </select>
+                    
+                    <button id="end-day-btn" class="btn-danger">Terminar Día</button>
+                </div>
+            </div>
+            
+            <div class="orders-container">
+                <div class="orders-column">
+                    <h3>🟡 Pendientes</h3>
+                    <div id="pending-list"></div>
+                </div>
+
+                <div class="orders-column">
+                    <h3>🟢 Entregados</h3>
+                    <div id="delivered-list"></div>
+                </div>
+            </div>
+        </div>
                     
                     <!-- FILTRO DE ZONAS -->
                     <select id="filter-zone" style="padding: 8px; border-radius: 12px; border: 1px solid var(--border); font-size: 0.9rem; background-color: white;">
