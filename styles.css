@@ -163,10 +163,20 @@ form { margin-top: 15px; }
 form input,
 form select {
     width: 100%;
+    max-width: 100%; /* 👈 Evita que sobresalga a la derecha */
+    min-width: 0;    /* 👈 Fuerza al celular a no estirar la caja */
     padding: 12px;
     border: 1px solid var(--border);
     border-radius: 14px;
     font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+/* 👈 Esto limpia el formato rebelde que le ponen los celulares al selector de hora */
+input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
 }
 
 /* Formulario nuevo pedido */
