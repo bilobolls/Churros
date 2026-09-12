@@ -108,9 +108,10 @@ const clientsRef = ref(db, "clients");
 clientForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const newClient = {
+ const newClient = {
     name: document.getElementById("client-name").value,
     qty: Number(document.getElementById("client-qty").value),
+    zone: document.getElementById("client-zone").value, // GUARDAMOS LA ZONA
     obs: document.getElementById("client-obs").value || "",
     time: document.getElementById("client-time").value || "",
     delivered: false
@@ -158,11 +159,17 @@ function renderClients(clients) {
     const card = document.createElement("div");
     card.className = "client-card";
 
+    // Le asignamos el barrio al HTML para poder filtrarlo después
+    card.setAttribute("data-zone", client.zone || "S/Z");
+
     card.innerHTML = `
       <div class="client-info">
-        <strong>${client.name}</strong>
-        <span>${client.qty} churros</span>
-        ${client.obs ? `<small>${client.obs}</small>` : ""}
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <strong>${client.name}</strong>
+            <span style="background-color: var(--warning); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">📍 ${client.zone || 'Sin Zona'}</span>
+        </div>
+        <span style="color: var(--primary); font-weight: bold; margin-top: 4px;">${client.qty} churros</span>
+        ${client.obs ? `<small style="color: #666;">Ref: ${client.obs}</small>` : ""}
         ${client.time ? `<small>Hora: ${client.time}</small>` : ""}
       </div>
       <div class="client-actions">
@@ -253,4 +260,23 @@ endDayBtn.addEventListener("click", () => {
   // ¡SOLO BORRAMOS LOS CLIENTES, NO LA CONFIGURACIÓN!
   remove(ref(db, "clients"));
   alert("Día finalizado. Pedidos reiniciados.");
+});
+// ==========================
+// 📍 FILTRO DE ZONAS
+// ==========================
+
+const filterZone = document.getElementById("filter-zone");
+
+filterZone.addEventListener("change", (e) => {
+    const selectedZone = e.target.value;
+    const allCards = document.querySelectorAll(".client-card"); // Seleccionamos pendientes y entregados
+    
+    allCards.forEach(card => {
+        // Si dice "Todas" mostramos todo. Si coincide la zona, también lo mostramos.
+        if (selectedZone === "Todas" || card.getAttribute("data-zone") === selectedZone) {
+            card.style.display = "flex"; // Usamos flex porque las tarjetas usan flexbox
+        } else {
+            card.style.display = "none";
+        }
+    });
 });
