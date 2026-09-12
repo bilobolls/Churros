@@ -29,10 +29,18 @@ const loginBtn = document.getElementById("login-btn");
 const passwordInput = document.getElementById("password-input");
 const loginError = document.getElementById("login-error");
 
+// 1. Verificamos si ya había iniciado sesión antes de recargar
+if (sessionStorage.getItem("isLoggedIn") === "true") {
+  loginScreen.classList.add("hidden");
+  appContainer.classList.remove("hidden");
+}
+
+// 2. Lógica del botón de ingreso
 loginBtn.addEventListener("click", () => {
   const pass = passwordInput.value.trim().toLowerCase();
 
   if (pass === "teamo") {
+    sessionStorage.setItem("isLoggedIn", "true"); // Guardamos la sesión
     loginScreen.classList.add("hidden");
     appContainer.classList.remove("hidden");
   } else {
@@ -51,7 +59,33 @@ const configPriceHalf = document.getElementById("config-price-half");
 const configStock = document.getElementById("config-stock");
 
 const configRef = ref(db, "config");
+// Variable global para guardar los precios y stock inicial
+let globalConfig = {
+  priceDozen: 0,
+  priceHalf: 0,
+  stock: 0
+};
 
+onValue(configRef, (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    // Actualizamos los campos visuales del formulario
+    configLocation.value = data.location;
+    configPriceDozen.value = data.priceDozen;
+    configPriceHalf.value = data.priceHalf;
+    configStock.value = data.stock;
+    
+    // Guardamos la información en nuestra variable global
+    globalConfig.priceDozen = data.priceDozen;
+    globalConfig.priceHalf = data.priceHalf;
+    globalConfig.stock = data.stock;
+    
+    // Volvemos a calcular las estadísticas si ya había clientes cargados
+    if (Object.keys(currentClients).length > 0) {
+        calculateStats(currentClients);
+    }
+  }
+});
 configForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -123,7 +157,13 @@ onValue(clientsRef, (snapshot) => {
   renderClients(clients);
   calculateStats(clients);
 });
+let currentClients = {}; // Nueva variable para guardar la lista de clientes
 
+onValue(clientsRef, (snapshot) => {
+  currentClients = snapshot.val() || {}; // Guardamos en la variable global
+  renderClients(currentClients);
+  calculateStats(currentClients);
+});
 // ==========================
 // 🧮 FUNCIONES
 // ==========================
@@ -194,28 +234,39 @@ function renderClients(clients) {
 };
 
 function calculateStats(clients) {
-  onValue(configRef, (snap) => {
-    const config = snap.val();
-    if (!config) return;
+  // Ya no usamos onValue(configRef, ...) aquí.
+  // Usamos globalConfig directamente.
 
-    let totalOrders = 0;
-    let pendingQty = 0;
-    let deliveredQty = 0; // Sumamos los entregados
-    let earned = 0;
-    let pendingMoney = 0;
+  let totalOrders = 0;
+  let pendingQty = 0;
+  let deliveredQty = 0;
+  let earned = 0;
+  let pendingMoney = 0;
 
-    Object.values(clients).forEach(client => {
-      totalOrders++;
-      const price = calculatePrice(client.qty, config);
+  Object.values(clients).forEach(client => {
+    totalOrders++;
+    const price = calculatePrice(client.qty, globalConfig); // Le pasamos globalConfig
 
-      if (client.delivered) {
-        earned += price;
-        deliveredQty += client.qty; // Contamos los churros ya entregados
-      } else {
-        pendingQty += client.qty;
-        pendingMoney += price;
-      }
-    });
+    if (client.delivered) {
+      earned += price;
+      deliveredQty += client.qty;
+    } else {
+      pendingQty += client.qty;
+      pendingMoney += price;
+    }
+  });
+
+  const totalComprometidos = pendingQty + deliveredQty;
+  const stockDisponible = globalConfig.stock - totalComprometidos;
+
+  statStock.textContent = `${stockDisponible} (de ${globalConfig.stock})`;
+  statPendingQty.textContent = pendingQty + " uds";
+  statTotalOrders.textContent = totalOrders;
+  statDozens.textContent = Math.ceil(pendingQty / 12);
+  statDulce.textContent = Math.ceil(pendingQty / 6);
+  statEarned.textContent = "$" + earned.toLocaleString('es-AR');
+  statPendingMoney.textContent = "$" + pendingMoney.toLocaleString('es-AR');
+}
 
     // LÓGICA DE STOCK CORREGIDA
     const totalComprometidos = pendingQty + deliveredQty;
@@ -247,11 +298,18 @@ function calculateStats(clients) {
 }
 
 function calculatePrice(qty, config) {
-  if (qty === 12) return config.priceDozen;
-  if (qty === 6) return config.priceHalf;
-  return (config.priceDozen / 12) * qty;
-}
+  const dozens = Math.floor(qty / 12);
+  const remainderAfterDozens = qty % 12;
+  
+  const halfDozens = Math.floor(remainderAfterDozens / 6);
+  const looseChurros = remainderAfterDozens % 6;
+  
+  const unitPrice = config.priceDozen / 12; // O podrías tener un config.priceUnit
 
+  return (dozens * config.priceDozen) + 
+         (halfDozens * config.priceHalf) + 
+         (looseChurros * unitPrice);
+}
 // ==========================
 // 🔴 TERMINAR DÍA
 // ==========================
