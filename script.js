@@ -182,13 +182,7 @@ function renderClients(clients) {
 
   });
 }
-window.deleteClient = function (id) {
-  remove(ref(db, "clients/" + id));
-};
 
-window.toggleDelivered = function (id, qty, delivered) {
-  const clientRef = ref(db, "clients/" + id);
-  update(clientRef, { delivered: !delivered });
 
   if (!delivered) {
     onValue(configRef, (snap) => {
@@ -206,22 +200,41 @@ function calculateStats(clients) {
 
     let totalOrders = 0;
     let pendingQty = 0;
+    let deliveredQty = 0; // Sumamos los entregados
     let earned = 0;
     let pendingMoney = 0;
 
     Object.values(clients).forEach(client => {
       totalOrders++;
-
       const price = calculatePrice(client.qty, config);
 
       if (client.delivered) {
         earned += price;
+        deliveredQty += client.qty; // Contamos los churros ya entregados
       } else {
         pendingQty += client.qty;
         pendingMoney += price;
       }
     });
 
+    // LÓGICA DE STOCK CORREGIDA
+    const totalComprometidos = pendingQty + deliveredQty;
+    const stockDisponible = config.stock - totalComprometidos;
+
+    // Actualizamos el DOM (Mostramos lo que queda y el total fabricado)
+    statStock.textContent = `${stockDisponible} (de ${config.stock})`;
+    
+    statPendingQty.textContent = pendingQty + " uds";
+    statTotalOrders.textContent = totalOrders;
+    statDozens.textContent = Math.ceil(pendingQty / 12);
+    statDulce.textContent = Math.ceil(pendingQty / 6);
+    
+    // Formateamos la plata para que se vea más profesional
+    statEarned.textContent = "$" + earned.toLocaleString('es-AR');
+    statPendingMoney.textContent = "$" + pendingMoney.toLocaleString('es-AR');
+
+  }, { onlyOnce: true });
+}
     statStock.textContent = config.stock;
     statPendingQty.textContent = pendingQty + " uds";
     statTotalOrders.textContent = totalOrders;
@@ -246,9 +259,10 @@ function calculatePrice(qty, config) {
 const endDayBtn = document.getElementById("end-day-btn");
 
 endDayBtn.addEventListener("click", () => {
-  const confirmDelete = confirm("¿Seguro que querés terminar el día? Se borrarán todos los datos.");
+  const confirmDelete = confirm("¿Seguro que querés terminar el día? Se borrarán todos los pedidos.");
   if (!confirmDelete) return;
 
-  remove(ref(db));
-  alert("Día finalizado. Todo reiniciado.");
+  // ¡SOLO BORRAMOS LOS CLIENTES, NO LA CONFIGURACIÓN!
+  remove(ref(db, "clients"));
+  alert("Día finalizado. Pedidos reiniciados.");
 });
